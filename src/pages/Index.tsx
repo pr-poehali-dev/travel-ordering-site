@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,6 +6,48 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
+import { Badge } from '@/components/ui/badge';
+
+// База городов с расстояниями (км)
+const cityDistances: Record<string, Record<string, number>> = {
+  'Москва': {
+    'Санкт-Петербург': 635,
+    'Казань': 719,
+    'Нижний Новгород': 411,
+    'Воронеж': 463,
+    'Ростов-на-Дону': 1067,
+    'Екатеринбург': 1416,
+    'Новосибирск': 3303,
+    'Краснодар': 1200
+  },
+  'Санкт-Петербург': {
+    'Москва': 635,
+    'Новгород': 180,
+    'Псков': 280,
+    'Мурманск': 1005,
+    'Архангельск': 1133
+  },
+  'Казань': {
+    'Москва': 719,
+    'Уфа': 525,
+    'Самара': 340,
+    'Пермь': 723,
+    'Екатеринбург': 756
+  },
+  'Нижний Новгород': {
+    'Москва': 411,
+    'Казань': 396,
+    'Киров': 385,
+    'Владимир': 230
+  }
+};
+
+// Тарифы за км
+const tariffRates = {
+  'economy': 8, // руб за км
+  'comfort': 12,
+  'vip': 18
+};
 
 export default function Index() {
   const [bookingForm, setBookingForm] = useState({
@@ -14,12 +56,59 @@ export default function Index() {
     date: '',
     time: '',
     passengers: '1',
+    tariff: 'comfort',
     comments: ''
   });
 
+  const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+
+  // Функция расчета расстояния
+  const calculateDistance = (from: string, to: string): number | null => {
+    if (!from || !to || from === to) return null;
+    
+    // Прямое расстояние
+    if (cityDistances[from]?.[to]) {
+      return cityDistances[from][to];
+    }
+    
+    // Обратное расстояние
+    if (cityDistances[to]?.[from]) {
+      return cityDistances[to][from];
+    }
+    
+    return null;
+  };
+
+  // Автоматический расчет стоимости
+  useEffect(() => {
+    const dist = calculateDistance(bookingForm.from, bookingForm.to);
+    setDistance(dist);
+    
+    if (dist && bookingForm.tariff) {
+      const rate = tariffRates[bookingForm.tariff as keyof typeof tariffRates];
+      const basePrice = dist * rate;
+      const totalPrice = basePrice * parseInt(bookingForm.passengers);
+      setCalculatedPrice(totalPrice);
+    } else {
+      setCalculatedPrice(null);
+    }
+  }, [bookingForm.from, bookingForm.to, bookingForm.tariff, bookingForm.passengers]);
+
+  // Получение списка доступных городов
+  const getAvailableCities = () => {
+    const cities = new Set<string>();
+    Object.keys(cityDistances).forEach(city => cities.add(city));
+    Object.values(cityDistances).forEach(destinations => {
+      Object.keys(destinations).forEach(city => cities.add(city));
+    });
+    return Array.from(cities).sort();
+  };
+
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+    const price = calculatedPrice ? ` Стоимость: ${calculatedPrice}₽` : '';
+    alert(`Заявка отправлена!${price} Мы свяжемся с вами в ближайшее время.`);
   };
 
   return (
@@ -93,27 +182,33 @@ export default function Index() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="from">Откуда</Label>
-                      <Input
-                        id="from"
-                        placeholder="Город отправления"
-                        value={bookingForm.from}
-                        onChange={(e) => setBookingForm({...bookingForm, from: e.target.value})}
-                        required
-                      />
+                      <Select onValueChange={(value) => setBookingForm({...bookingForm, from: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите город отправления" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableCities().map(city => (
+                            <SelectItem key={city} value={city}>{city}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="to">Куда</Label>
-                      <Input
-                        id="to"
-                        placeholder="Город назначения"
-                        value={bookingForm.to}
-                        onChange={(e) => setBookingForm({...bookingForm, to: e.target.value})}
-                        required
-                      />
+                      <Select onValueChange={(value) => setBookingForm({...bookingForm, to: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите город назначения" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableCities().map(city => (
+                            <SelectItem key={city} value={city}>{city}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   
-                  <div className="grid md:grid-cols-3 gap-6">
+                  <div className="grid md:grid-cols-4 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="date">Дата поездки</Label>
                       <Input
@@ -157,7 +252,64 @@ export default function Index() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tariff">Тариф</Label>
+                      <Select onValueChange={(value) => setBookingForm({...bookingForm, tariff: value})} defaultValue="comfort">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите тариф" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="economy">Эконом ({tariffRates.economy}₽/км)</SelectItem>
+                          <SelectItem value="comfort">Комфорт ({tariffRates.comfort}₽/км)</SelectItem>
+                          <SelectItem value="vip">VIP ({tariffRates.vip}₽/км)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
+
+                  {/* Калькулятор стоимости */}
+                  {(distance || calculatedPrice) && (
+                    <Card className="bg-blue-50 border-primary/20">
+                      <CardContent className="pt-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-lg font-semibold flex items-center">
+                            <Icon name="Calculator" className="mr-2 text-primary" />
+                            Расчет стоимости
+                          </h4>
+                          <Badge variant="secondary" className="bg-primary/10 text-primary">
+                            Автоматический расчет
+                          </Badge>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4 text-sm">
+                          {distance && (
+                            <div className="flex items-center">
+                              <Icon name="Route" className="h-4 w-4 text-gray-500 mr-2" />
+                              <span>Расстояние: <strong>{distance} км</strong></span>
+                            </div>
+                          )}
+                          <div className="flex items-center">
+                            <Icon name="Users" className="h-4 w-4 text-gray-500 mr-2" />
+                            <span>Пассажиров: <strong>{bookingForm.passengers}</strong></span>
+                          </div>
+                          <div className="flex items-center">
+                            <Icon name="Tag" className="h-4 w-4 text-gray-500 mr-2" />
+                            <span>Тариф: <strong>{bookingForm.tariff === 'economy' ? 'Эконом' : bookingForm.tariff === 'comfort' ? 'Комфорт' : 'VIP'}</strong></span>
+                          </div>
+                        </div>
+                        {calculatedPrice && (
+                          <div className="mt-4 p-4 bg-white rounded-lg border">
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-semibold">Общая стоимость:</span>
+                              <span className="text-2xl font-bold text-primary">{calculatedPrice.toLocaleString()}₽</span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {distance} км × {tariffRates[bookingForm.tariff as keyof typeof tariffRates]}₽/км × {bookingForm.passengers} пас.
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="comments">Дополнительные пожелания</Label>

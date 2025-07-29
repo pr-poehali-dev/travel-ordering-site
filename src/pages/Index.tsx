@@ -56,9 +56,9 @@ const cityDistances: Record<string, Record<string, number>> = {
 
 // Тарифы за км
 const tariffRates = {
-  economy: , // руб за км
-  comfort: ,
-  vip: ,
+  economy: 8, // руб за км
+  comfort: 12,
+  vip: 18,
 };
 
 export default function Index() {

@@ -807,7 +807,7 @@ ${formData.comments || 'Нет'}
               </CardHeader>
               <CardContent>
                 <p className="text-xl font-semibold text-primary">
-                  info@traveltracks.ru
+                  treveltrex@inbox.ru
                 </p>
                 <p className="text-gray-600 mt-2">Ответим в течение часа</p>
               </CardContent>
@@ -822,8 +822,8 @@ ${formData.comments || 'Нет'}
                 <CardTitle>Адрес</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xl font-semibold">Москва</p>
-                <p className="text-gray-600 mt-2">ул. Транспортная, 15</p>
+                <p className="text-xl font-semibold">Самара</p>
+                <p className="text-gray-600 mt-2">ул. Чапаевская</p>
               </CardContent>
             </Card>
           </div>

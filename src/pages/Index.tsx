@@ -69,6 +69,7 @@ export default function Index() {
     time: "",
     passengers: "1",
     tariff: "comfort",
+    phone: "",
     comments: "",
   });
 
@@ -133,6 +134,7 @@ export default function Index() {
         time: bookingForm.time,
         passengers: bookingForm.passengers,
         tariff: bookingForm.tariff,
+        phone: bookingForm.phone,
         comments: bookingForm.comments,
         calculatedPrice: calculatedPrice,
         distance: distance
@@ -148,6 +150,7 @@ export default function Index() {
 Время отправления: ${formData.time}
 Количество пассажиров: ${formData.passengers}
 Тариф: ${formData.tariff}
+Контактный телефон: ${formData.phone}
 ${formData.calculatedPrice ? `Стоимость: ${formData.calculatedPrice}₽` : ''}
 ${formData.distance ? `Расстояние: ${formData.distance} км` : ''}
 
@@ -492,6 +495,23 @@ ${formData.comments || 'Нет'}
                       </CardContent>
                     </Card>
                   )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Контактный номер телефона</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+7 (000) 000-00-00"
+                      value={bookingForm.phone}
+                      onChange={(e) =>
+                        setBookingForm({
+                          ...bookingForm,
+                          phone: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="comments">Дополнительные пожелания</Label>

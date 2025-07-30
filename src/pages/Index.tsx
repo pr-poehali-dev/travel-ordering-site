@@ -738,19 +738,18 @@ ${formData.comments || 'Нет'}
                   15 лет безупречной работы
                 </h4>
                 <p className="text-gray-600">
-                  ТревелТрекс — это команда профессионалов, которая уже более 15
-                  лет предоставляет качественные услуги пассажирских перевозок.
-                  Мы гордимся нашей безупречной репутацией и доверием тысяч
-                  клиентов.
+                  ТревелТрекс — это команда профессионалов, которая уже 1
+                  год предоставляет качественные услуги пассажирских перевозок.
+                  Мы гордимся нашей безупречной репутацией и доверием клиентов.
                 </p>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-primary">50+</div>
+                    <div className="text-3xl font-bold text-primary">170+</div>
                     <p className="text-gray-600">Автобусов в парке</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-primary">100K+</div>
+                    <div className="text-3xl font-bold text-primary">1К+</div>
                     <p className="text-gray-600">Довольных клиентов</p>
                   </div>
                 </div>

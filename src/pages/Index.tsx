@@ -58,7 +58,7 @@ const cityDistances: Record<string, Record<string, number>> = {
 const tariffRates = {
   economy: 8, // руб за км
   comfort: 12,
-  vip: 18,
+  business: 18,
 };
 
 export default function Index() {
@@ -122,10 +122,52 @@ export default function Index() {
     return Array.from(cities).sort();
   };
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const price = calculatedPrice ? ` Стоимость: ${calculatedPrice}₽` : "";
-    alert(`Заявка отправлена!${price} Мы свяжемся с вами в ближайшее время.`);
+    
+    try {
+      const formData = {
+        from: bookingForm.from,
+        to: bookingForm.to,
+        date: bookingForm.date,
+        time: bookingForm.time,
+        passengers: bookingForm.passengers,
+        tariff: bookingForm.tariff,
+        comments: bookingForm.comments,
+        calculatedPrice: calculatedPrice,
+        distance: distance
+      };
+
+      // Формируем письмо
+      const emailBody = `
+Новая заявка на поездку:
+
+Откуда (точный адрес): ${formData.from}
+Куда (точный адрес): ${formData.to}
+Дата поездки: ${formData.date}
+Время отправления: ${formData.time}
+Количество пассажиров: ${formData.passengers}
+Тариф: ${formData.tariff}
+${formData.calculatedPrice ? `Стоимость: ${formData.calculatedPrice}₽` : ''}
+${formData.distance ? `Расстояние: ${formData.distance} км` : ''}
+
+Дополнительные пожелания:
+${formData.comments || 'Нет'}
+
+Дата заявки: ${new Date().toLocaleString('ru-RU')}
+      `;
+
+      // Создаем mailto ссылку
+      const mailtoLink = `mailto:treveltrex@inbox.ru?subject=Новая заявка на поездку&body=${encodeURIComponent(emailBody)}`;
+      
+      // Открываем почтовый клиент
+      window.location.href = mailtoLink;
+      
+      alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+    } catch (error) {
+      console.error('Ошибка отправки заявки:', error);
+      alert('Произошла ошибка при отправке заявки. Попробуйте еще раз.');
+    }
   };
 
   return (
@@ -355,13 +397,13 @@ export default function Index() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="economy">
-                            Эконом ({tariffRates.economy}₽/км)
+                            Эконом
                           </SelectItem>
                           <SelectItem value="comfort">
-                            Комфорт ({tariffRates.comfort}₽/км)
+                            Комфорт
                           </SelectItem>
-                          <SelectItem value="vip">
-                            VIP ({tariffRates.vip}₽/км)
+                          <SelectItem value="business">
+                            Бизнес
                           </SelectItem>
                         </SelectContent>
                       </Select>

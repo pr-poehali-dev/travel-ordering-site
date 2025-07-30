@@ -259,6 +259,15 @@ ${formData.comments || 'Нет'}
                 <Icon name="Phone" className="mr-2" />
                 +7-(916)-769-42-10
               </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-primary"
+                onClick={() => window.open('https://www.avito.ru/baykit/predlozheniya_uslug/treveltreks_passazhirskie_perevozki_7299356106?context=H4sIAAAAAAAA_wE_AMD_YToyOntzOjEzOiJsb2NhbFByaW9yaXR5IjtiOjA7czoxOiJ4IjtzOjE2OiJHV2FCSTlOaW43eUxLbEY3Ijt94s8XGD8AAAA', '_blank')}
+              >
+                <Icon name="ExternalLink" className="mr-2" />
+                Заказать на Авито
+              </Button>
             </div>
           </div>
         </div>

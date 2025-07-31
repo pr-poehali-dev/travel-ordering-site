@@ -839,10 +839,7 @@ ${formData.comments || 'Нет'}
             </div>
             <div className="text-center md:text-right">
               <p className="text-gray-400">
-                © 2024 ТревелТрекс. Все права защищены.
-              </p>
-              <p className="text-gray-400 text-sm mt-1">
-                Лицензия на перевозки №12345
+                © 2025 ТревелТрекс. Все права защищены.
               </p>
             </div>
           </div>

@@ -681,7 +681,7 @@ ${formData.comments || 'Нет'}
 
             <Card className="border-2 hover:border-primary transition-colors">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">VIP</CardTitle>
+                <CardTitle className="text-2xl">Бизнес</CardTitle>
                 <CardDescription>Премиальный сервис</CardDescription>
                 <div className="text-3xl font-bold text-primary">от 1200₽</div>
                 <p className="text-sm text-gray-500">за человека</p>
@@ -735,7 +735,7 @@ ${formData.comments || 'Нет'}
               </div>
               <div className="space-y-6">
                 <h4 className="text-2xl font-semibold text-gray-900">
-                  15 лет безупречной работы
+                  1 год безупречной работы
                 </h4>
                 <p className="text-gray-600">
                   ТревелТрекс — это команда профессионалов, которая уже 1
